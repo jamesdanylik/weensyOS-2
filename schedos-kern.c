@@ -98,11 +98,12 @@ start(void)
 	cursorpos = (uint16_t *) 0xB8000;
 
 	// Initialize the scheduling algorithm.
-	scheduling_algorithm = 0;
+	scheduling_algorithm = 1;
 
 	// Switch to the first process.
-	run(&proc_array[1]);
-
+	//run(&proc_array[1]);
+	schedule();
+	
 	// Should never get here!
 	while (1)
 		/* do nothing */;
@@ -206,7 +207,9 @@ schedule(void)
 			while ( pid--, pid != 0 )
 			{
 				if (proc_array[pid].p_state == P_RUNNABLE)
-					run(&proc_array[pid];
+					run(&proc_array[pid]);
+				if (pid == 1)
+					pid = NPROCS;
 			}
 		}
 
