@@ -1,14 +1,17 @@
-Name:
-UCLA ID:
+Name: James Danylik
+UCLA ID: 403548957
 
-Collaborators:
+Collaborators: None
 
 -------------------------------------------------------------------------------
 
 Response to Exercise 1:
 
-The name of the scheduling algorithm is:
-
+The name of the scheduling algorithm is: Round Robin.
+Scheduling algorithm 0 simply iterates through our array of processes,
+scheduling the next in turn.  If a processes doesn't finish, i.e. a clock
+interrupt happened before completion, it is not allowed to finish; the next
+process is always given control after the previous yields it.
 
 (Exercise 2 is a coding exercise)
 
