@@ -46,6 +46,9 @@ static process_t proc_array[NPROCS];
 // This is kept up to date by the run() function, in mpos-x86.c.
 process_t *current;
 
+// An offest to make prioirty scheduling alternate.
+int offset;
+
 // The preferred scheduling algorithm.
 int scheduling_algorithm;
 
@@ -67,12 +70,14 @@ start(void)
 	segments_init();
 	interrupt_controller_init(0);
 	console_clear();
+	offset = 0;
 
 	// Initialize process descriptors as empty
 	memset(proc_array, 0, sizeof(proc_array));
 	for (i = 0; i < NPROCS; i++) {
 		proc_array[i].p_pid = i;
 		proc_array[i].p_state = P_EMPTY;
+		proc_array[i].p_priority = 1;
 	}
 
 	// Set up process descriptors (the proc_array[])
@@ -152,6 +157,7 @@ interrupt(registers_t *reg)
 		// 'sys_user*' are provided for your convenience, in case you
 		// want to add a system call.
 		/* Your code here (if you want). */
+		current->p_priority = reg->reg_eax;
 		run(current);
 
 	case INT_SYS_USER2:
@@ -203,15 +209,18 @@ schedule(void)
 		}
 	if (scheduling_algorithm ==  1)
 		while (1) {
-			pid = NPROCS;
-			while ( pid--, pid != 0 )
+			pid = 0;
+			while ( pid++, pid != NPROCS )
 			{
 				if (proc_array[pid].p_state == P_RUNNABLE)
 					run(&proc_array[pid]);
-				if (pid == 1)
-					pid = NPROCS;
+				if (pid == NPROCES-1)
+					pid = 0;
 			}
 		}
+	if (scheduling_algorithm == 2)
+	{
+	}
 
 	// If we get here, we are running an unknown scheduling algorithm.
 	cursorpos = console_printf(cursorpos, 0x100, "\nUnknown scheduling algorithm %d\n", scheduling_algorithm);
