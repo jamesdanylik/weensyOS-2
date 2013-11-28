@@ -30,7 +30,7 @@ typedef struct process {
 
 	procstate_t p_state;		// Process state; see above
 	int p_exit_status;		// Process's exit status
-	int p_prioirty			//Priority level for this process
+	int p_priority;			//Priority level for this process
 } process_t;
 
 

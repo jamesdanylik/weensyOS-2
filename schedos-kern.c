@@ -214,7 +214,7 @@ schedule(void)
 			{
 				if (proc_array[pid].p_state == P_RUNNABLE)
 					run(&proc_array[pid]);
-				if (pid == NPROCES-1)
+				if (pid == NPROCS-1)
 					pid = 0;
 			}
 		}
