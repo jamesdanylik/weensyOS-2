@@ -47,7 +47,9 @@ static process_t proc_array[NPROCS];
 process_t *current;
 
 // An offest to make prioirty scheduling alternate.
-int offset;
+int last_offset;
+int last_priority;
+#define MAX_PRIORITY 16
 
 // The preferred scheduling algorithm.
 int scheduling_algorithm;
@@ -70,7 +72,8 @@ start(void)
 	segments_init();
 	interrupt_controller_init(0);
 	console_clear();
-	offset = 0;
+	last_offset = 0;
+	last_priority = MAX_PRIORITY;
 
 	// Initialize process descriptors as empty
 	memset(proc_array, 0, sizeof(proc_array));
@@ -78,6 +81,8 @@ start(void)
 		proc_array[i].p_pid = i;
 		proc_array[i].p_state = P_EMPTY;
 		proc_array[i].p_priority = 1;
+		if( i == 4)
+			proc_array[i].p_priority = 2;
 	}
 
 	// Set up process descriptors (the proc_array[])
@@ -103,7 +108,7 @@ start(void)
 	cursorpos = (uint16_t *) 0xB8000;
 
 	// Initialize the scheduling algorithm.
-	scheduling_algorithm = 1;
+	scheduling_algorithm = 2;
 
 	// Switch to the first process.
 	//run(&proc_array[1]);
@@ -210,8 +215,7 @@ schedule(void)
 	if (scheduling_algorithm ==  1)
 		while (1) {
 			pid = 0;
-			while ( pid++, pid != NPROCS )
-			{
+			while ( pid++, pid != NPROCS ) {
 				if (proc_array[pid].p_state == P_RUNNABLE)
 					run(&proc_array[pid]);
 				if (pid == NPROCS-1)
@@ -219,8 +223,49 @@ schedule(void)
 			}
 		}
 	if (scheduling_algorithm == 2)
-	{
-	}
+		while(1) {
+			int matches = 0; //number of higest prioirty processes
+			int t_priority = MAX_PRIORITY; //the highet prioirty
+
+			for ( pid = 1; pid < NPROCS; pid++) {
+				if (proc_array[pid].p_state == P_RUNNABLE
+				&&  proc_array[pid].p_priority < t_priority) {
+				// we have a new highest prioirty
+					matches = 1;
+					t_priority = proc_array[pid].p_priority;
+				}
+				else if (proc_array[pid].p_state == P_RUNNABLE
+				     &&  proc_array[pid].p_priority == t_priority) {
+				// this equals the lowest priority too
+					matches++;
+				}
+			}
+
+			if ( t_priority != last_priority ) {
+				last_offset = 0;
+				last_priority = t_priority;
+			}
+
+			int current_offset = 0;
+			for ( pid =1; pid < NPROCS; pid++) {
+				if (proc_array[pid].p_state == P_RUNNABLE
+				&&  proc_array[pid].p_priority == t_priority) {
+					if (current_offset == last_offset) {
+						last_offset++;
+						if (last_offset >= matches)
+							last_offset = 0;
+						run(&proc_array[pid]);
+					}
+					else {
+						current_offset++;
+					}
+
+				}
+			}
+
+			
+
+		}
 
 	// If we get here, we are running an unknown scheduling algorithm.
 	cursorpos = console_printf(cursorpos, 0x100, "\nUnknown scheduling algorithm %d\n", scheduling_algorithm);

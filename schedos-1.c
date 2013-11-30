@@ -14,6 +14,7 @@
  *
  *****************************************************************************/
 
+
 #ifndef PRINTCHAR
 #define PRINTCHAR	('1' | 0x0C00)
 #endif
@@ -22,7 +23,7 @@ void
 start(void)
 {
 	int i;
-
+	
 	for (i = 0; i < RUNCOUNT; i++) {
 		// Write characters to the console, yielding after each one.
 		*cursorpos++ = PRINTCHAR;
