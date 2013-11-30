@@ -71,4 +71,13 @@ sys_user1(int priority)
 		     : "cc", "memory");
 }
 
+static inline void
+sys_user2(int character)
+{
+	asm volatile("int %0\n"
+		     : : "i" (INT_SYS_USER2),
+		         "a" (character)
+		     : "cc", "memory");	
+}
+
 #endif

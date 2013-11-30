@@ -70,7 +70,7 @@ start(void)
 
 	// Set up hardware (schedos-x86.c)
 	segments_init();
-	interrupt_controller_init(0);
+	interrupt_controller_init(1);
 	console_clear();
 	last_offset = 0;
 	last_priority = MAX_PRIORITY;
@@ -108,7 +108,7 @@ start(void)
 	cursorpos = (uint16_t *) 0xB8000;
 
 	// Initialize the scheduling algorithm.
-	scheduling_algorithm = 2;
+	scheduling_algorithm = 0;
 
 	// Switch to the first process.
 	//run(&proc_array[1]);
@@ -167,7 +167,8 @@ interrupt(registers_t *reg)
 
 	case INT_SYS_USER2:
 		/* Your code here (if you want). */
-		run(current);
+		*cursorpos++ = reg->reg_eax;
+		schedule();
 
 	case INT_CLOCK:
 		// A clock interrupt occurred (so an application exhausted its
