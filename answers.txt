@@ -17,21 +17,28 @@ process is always given control after the previous yields it.
 
 
 Response to Exercise 3:
+Scheduling Algorithm 1: | 1 | 2 | 3 | 4 | 1 ... | 3 | 4 |
+Scheduling Algorithm 2: | 1 | 1 | 1 | 1 | 1 ... | 4 | 4 |
 
-Average turnaround time for scheduling_algorithm 0:
-Average turnaround time for scheduling_algorithm 1:
 
-Average wait time for scheduling_algorithm 0:
-Average wait time for scheduling_algorithm 1:
+Average turnaround time for scheduling_algorithm 0: 1278.5ms
+Average turnaround time for scheduling_algorithm 1: 640ms.
+
+Average wait time for scheduling_algorithm 0: 958.5ms.
+Average wait time for scheduling_algorithm 1: 480ms.
 
 
 Exercise 4:
 
 Did you complete Exercise 4A, Exercise 4B, or both for extra credit?
-
+Exercise 4A
 
 Exercise 5:
-
+In my picture, the first known timer interrupt occurs duing the second round of
+processes. In my picture, the first roung occurs as normal, but the second is
+missing a '4'; since each process merely prints a character before yielding
+control, this would implr the timer interupt occured during process 4's
+execution.
 
 (Exercise 6 is a coding exercise)
 
